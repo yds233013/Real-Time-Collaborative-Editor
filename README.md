@@ -79,36 +79,6 @@ The system is built on a modern stack with emphasis on:
 - Caching layer for performance optimization
 - Secure user authentication and authorization
 
-## 🚀 Coming Soon
 
-- [ ] Rich text formatting toolbar
-- [ ] Document sharing and permissions
-- [ ] Real-time cursors and presence indicators
-- [ ] Document version history
-- [ ] Collaborative comments and suggestions
-- [ ] Mobile app support
 
-## 💻 Development
 
-### Prerequisites
-- Node.js (v18 or higher)
-- MongoDB
-- Redis
-- Docker (optional)
-
-### Setup Instructions (Coming Soon)
-Detailed setup instructions will be added as the project develops.
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to:
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-⭐ If you find this project interesting, please consider giving it a star! 
