@@ -1,19 +1,11 @@
-import { useState } from 'react'
-import { createEditor, type Descendant, type Element, type BaseEditor } from 'slate'
-import { Slate, Editable, withReact, type ReactEditor } from 'slate-react'
-import { AppBar, Toolbar, Typography, Container, Paper } from '@mui/material'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-
-declare module 'slate' {
-  interface CustomTypes {
-    Editor: BaseEditor & ReactEditor
-    Element: { type: 'paragraph'; children: CustomText[] }
-    Text: CustomText
-  }
-}
-
-type CustomText = { text: string }
+import { Box, useMediaQuery, Drawer, AppBar, Toolbar, IconButton, Typography } from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
+import Editor from './components/Editor.tsx'
+import { DocumentList } from './components/DocumentList'
+import { useState } from 'react'
+import type { Document } from './services/DocumentService'
 
 const darkTheme = createTheme({
   palette: {
@@ -21,58 +13,130 @@ const darkTheme = createTheme({
   },
 })
 
-const initialValue: Descendant[] = [
-  {
-    type: 'paragraph' as const,
-    children: [{ text: 'Start typing here...' }],
-  },
-]
+const DRAWER_WIDTH = 300;
 
 function App() {
-  const [editor] = useState(() => withReact(createEditor()))
-  const [value, setValue] = useState(initialValue)
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const userId = 'demo-user' // In a real app, this would come from authentication
+  const isMobile = useMediaQuery(darkTheme.breakpoints.down('sm'))
+
+  const handleDocumentSelect = (document: Document) => {
+    setSelectedDocument(document)
+    if (isMobile) {
+      setMobileOpen(false)
+    }
+  }
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen)
+  }
+
+  const documentList = (
+    <Box sx={{ width: DRAWER_WIDTH, height: '100%', overflow: 'auto' }}>
+      <DocumentList userId={userId} onDocumentSelect={handleDocumentSelect} />
+    </Box>
+  )
 
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <div style={{ minHeight: '100vh', backgroundColor: '#121212' }}>
-        <AppBar position="static">
+      <Box sx={{ display: 'flex', height: '100vh' }}>
+        <AppBar 
+          position="fixed" 
+          sx={{ 
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+            display: { sm: 'none' }
+          }}
+        >
           <Toolbar>
-            <Typography variant="h6">
-              Real-Time Collaborative Editor
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Document Editor
             </Typography>
           </Toolbar>
         </AppBar>
-        <Container maxWidth="lg" sx={{ mt: 4 }}>
-          <Paper 
-            elevation={3} 
-            sx={{ 
-              p: 3,
-              minHeight: '70vh',
-              backgroundColor: '#1e1e1e'
+
+        <Box
+          component="nav"
+          sx={{ 
+            width: { sm: DRAWER_WIDTH }, 
+            flexShrink: { sm: 0 } 
+          }}
+        >
+          {/* Mobile drawer */}
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile
+            }}
+            sx={{
+              display: { xs: 'block', sm: 'none' },
+              '& .MuiDrawer-paper': { 
+                boxSizing: 'border-box', 
+                width: DRAWER_WIDTH 
+              },
             }}
           >
-            <Slate
-              editor={editor}
-              initialValue={initialValue}
-              onChange={newValue => {
-                setValue(newValue)
-                // We'll implement real-time sync here
-                console.log(newValue)
+            {documentList}
+          </Drawer>
+
+          {/* Desktop drawer */}
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: 'none', sm: 'block' },
+              '& .MuiDrawer-paper': { 
+                boxSizing: 'border-box', 
+                width: DRAWER_WIDTH,
+                position: 'relative',
+                height: '100%'
+              },
+            }}
+            open
+          >
+            {documentList}
+          </Drawer>
+        </Box>
+
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+            mt: { xs: 8, sm: 0 },
+            height: '100%',
+            overflow: 'auto'
+          }}
+        >
+          {selectedDocument && <Editor documentId={selectedDocument._id} />}
+          {!selectedDocument && (
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                height: '100%'
               }}
             >
-              <Editable
-                style={{
-                  padding: '20px',
-                  minHeight: '65vh',
-                  color: '#fff',
-                }}
-                placeholder="Start typing..."
-              />
-            </Slate>
-          </Paper>
-        </Container>
-      </div>
+              <Typography variant="h5" color="text.secondary">
+                Select a document to start editing
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      </Box>
     </ThemeProvider>
   )
 }
