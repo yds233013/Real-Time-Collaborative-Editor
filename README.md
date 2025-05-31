@@ -1,6 +1,44 @@
-# Collaborative Editor
+# Real-Time Collaborative Text Editor
 
-A powerful real-time collaborative text editor that enables multiple users to edit documents simultaneously, similar to Google Docs. This project showcases modern web technologies and advanced concepts in distributed systems.
+A real-time collaborative text editor that allows multiple users to edit documents simultaneously. The application features rich text editing capabilities, user authentication, and real-time collaboration with cursor tracking.
+
+## Features
+
+- Real-time collaborative editing
+- Rich text formatting (bold, italic, underline, text color)
+- Document version history
+- User authentication and authorization
+- Document sharing and access control
+- Real-time cursor tracking for multiple users
+- Document list management
+- Responsive Material UI design
+
+## Technologies Used
+
+### Frontend
+- React with TypeScript
+- Vite for build tooling
+- Material UI (MUI) for components and styling
+- Slate.js for rich text editing
+- Socket.io-client for real-time communication
+- React Router for navigation
+- Axios for HTTP requests
+
+### Backend
+- Node.js with Express
+- TypeScript
+- MongoDB for database
+- Socket.io for WebSocket communication
+- JWT for authentication
+- Express middleware for request handling
+- Mongoose for MongoDB object modeling
+
+### Development Tools
+- Git for version control
+- npm for package management
+- nodemon for development server
+- TypeScript compiler
+- ESLint for code linting
 
 ## 🌟 Key Features
 
